@@ -11,6 +11,11 @@ pub fn handle_connection(mut stream: std::net::TcpStream) {
     // GET
     let (status_line, filename) = match request_line.as_str() {
         "GET / HTTP/1.1" => ("HTTP/1.1 200 OK", "index.html"),
+        "GET /health HTTP/1.1" => ("HTTP/1.1 200 OK", "index.html"),
+        "GET /sleep HTTP/1.1" => {
+            std::thread::sleep(std::time::Duration::from_secs(5));
+            ("HTTP/1.1 200 OK", "hello.html")
+        }
         _ => ("HTTP/1.1 400 OK", "404.html"),
     };
     let contents = std::fs::read_to_string(filename).expect("file not found");
