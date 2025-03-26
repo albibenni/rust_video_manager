@@ -1,6 +1,7 @@
-mod handler;
-mod lib;
+use handler::api::handle_connection;
 
+mod handler;
+mod utils;
 
 fn main() {
     dotenv::dotenv().ok();
@@ -15,7 +16,7 @@ fn main() {
             "localhost:8081".to_string()
         }
     };
-    let pool = lib::lib::ThreadPool::new(4);
+    let pool = utils::pool::ThreadPool::new(4);
     let listener = std::net::TcpListener::bind(port).expect("Something went wrong");
     for stream in listener.incoming() {
         println!("Connection established!");
@@ -23,6 +24,6 @@ fn main() {
         // std::thread::spawn(|| {
         //     handler::api::handle_connection(stream.expect("Something went wrong"));
         // });
-        pool.exec
+        pool.execute(|| handle_connection(stream.expect("ee")));
     }
 }
